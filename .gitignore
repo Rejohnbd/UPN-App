@@ -1,0 +1,5 @@
+.venv/
+requirements.txt
+backend/
+face_recognition/uploads/*
+face_recognition/__pycache__/*
