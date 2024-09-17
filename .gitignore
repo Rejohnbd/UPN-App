@@ -1,5 +1,9 @@
 .venv/
 requirements.txt
-backend/
+backend/core/__pycache__
+backend/userimage/__pycache__
+backend/userimage/migrations/__pycache__
+backend/media/*
+backend/db.sqlite3
 face_recognition/uploads/*
 face_recognition/__pycache__/*
