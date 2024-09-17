@@ -38,7 +38,7 @@ def welcome():
     return {"message": "Welcome to the FastAPI Face Recognition System"}
 
 # Upload API
-@app.post('/upload')
+@app.post('/api/upload')
 async def upload(file: UploadFile = File(...)):
     upload_directory = './uploads'
     

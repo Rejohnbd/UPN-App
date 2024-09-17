@@ -126,3 +126,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Adjust the path as needed
 MEDIA_URL = '/media/'
+EXTERNAL_API_URL = 'http://127.0.0.1:8000/api'
