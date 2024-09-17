@@ -1,5 +1,4 @@
 .venv/
-requirements.txt
 backend/core/__pycache__
 backend/userimage/__pycache__
 backend/userimage/migrations/__pycache__
