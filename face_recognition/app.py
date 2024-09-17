@@ -7,6 +7,11 @@ import threading
 import os
 import shutil
 from fastapi import FastAPI, HTTPException, File, UploadFile
+import requests
+import numpy as np
+import io
+from datetime import datetime
+import asyncio
 
 app = FastAPI()
 
@@ -32,6 +37,10 @@ EYE_AR_CONSEC_FRAMES = 3
 
 # Flag to indicate if video streaming is running
 streaming_active = False
+lock = threading.Lock()
+
+# External API URL
+EXTERNAL_API_URL = 'http://localhost:9000/api/notifications/'
 
 @app.get('/welcome')
 def welcome():
@@ -79,13 +88,50 @@ def load_known_faces():
 
     print(f"Loaded {len(known_face_encodings)} known faces.")
 
+# Function to post data to the external API
+async def post_to_external_api(image: np.ndarray):
+    """
+    Post the data to the external API including date, time, and the image.
+    """
+    # Convert image to bytes
+    _, img_encoded = cv2.imencode('.jpg', image)
+    image_bytes = img_encoded.tobytes()
+
+    # Prepare the data
+    date = datetime.now().strftime('%Y-%m-%d')
+    time = datetime.now().strftime('%H:%M:%S')
+    files = {'image': ('image.jpg', io.BytesIO(image_bytes), 'image/jpeg')}
+    data = {'date': date, 'time': time}
+
+    try:
+        response = requests.post(EXTERNAL_API_URL, data=data, files=files)
+        if response.status_code == 200:
+            print("Data posted successfully")
+        else:
+            print(f"Failed to post data: {response.status_code} {response.text}")
+    except requests.RequestException as e:
+        print(f"An error occurred: {e}")
+
+# Function to handle posting data for unknown faces with delay
+def handle_unknown_face_post(image: np.ndarray):
+    """
+    Handles the unknown face posting with a delay.
+    """
+    async def post_data():
+        await post_to_external_api(image)
+        await asyncio.sleep(30)  # Wait for 30 seconds before allowing another post
+
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(post_data())
+
 # Video streaming API
 @app.get('/')
 def index():
     global streaming_active
     if not streaming_active:
         streaming_active = True
-        threading.Thread(target=generate_stream).start()
+        threading.Thread(target=generate_stream, daemon=True).start()
     return StreamingResponse(generate_stream(), media_type="multipart/x-mixed-replace; boundary=frame")
 
 # Function to generate the video stream
@@ -98,6 +144,8 @@ def generate_stream():
     if not video_capture.isOpened():
         raise HTTPException(status_code=500, detail="Could not open webcam")
 
+    last_post_time = 0  # Timestamp of the last post
+
     while streaming_active:
         ret, frame = video_capture.read()
         if not ret:
@@ -106,6 +154,8 @@ def generate_stream():
         # Convert the frame to grayscale for dlib face detection
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         rects = detector(gray, 0)
+
+        unknown_face_detected = False
 
         for rect in rects:
             shape = predictor(gray, rect)
@@ -142,6 +192,16 @@ def generate_stream():
 
                     cv2.rectangle(frame, (left, top), (right, bottom), box_color, 2)
                     cv2.putText(frame, name, (left, top - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.90, box_color, 2)
+
+                    if name == "Unknown":
+                        unknown_face_detected = True
+
+        if unknown_face_detected:
+            current_time = datetime.now().timestamp()
+            if current_time - last_post_time >= 30:
+                # Only post if 30 seconds have passed since the last post
+                threading.Thread(target=handle_unknown_face_post, args=(frame,), daemon=True).start()
+                last_post_time = current_time
 
         # Encode the frame as a JPEG
         ret, jpeg = cv2.imencode('.jpg', frame)
