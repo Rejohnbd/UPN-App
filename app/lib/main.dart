@@ -34,18 +34,52 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            Container(
+              height: 80,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              child: const Center(
+                child: Text(
+                  'Menu',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                  ),
+                ),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.notifications),
+              title: const Text('All Notifications'),
+              onTap: () {
+                // Handle navigation to All Notifications screen here
+                Navigator.pop(context); // Close the drawer
+                // Perform your action or navigate to another screen
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text('Notification Settings'),
+              onTap: () {
+                // Handle navigation to Notification Settings screen here
+                Navigator.pop(context); // Close the drawer
+                // Perform your action or navigate to another screen
+              },
+            ),
+          ],
+        ),
       ),
       body: ListView.builder(
         padding: const EdgeInsets.all(8.0),
@@ -68,7 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           );
         },
-      ),// This trailing comma makes auto-formatting nicer for build methods.
+      ),
     );
   }
 }
