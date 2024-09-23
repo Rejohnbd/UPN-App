@@ -13,7 +13,7 @@ import requests
 import json
 
 # Create your views here.
-SERVICE_ACCOUNT_FILE = './faceappnotify-firebase-adminsdk-qbyh6-75edf65198.json'
+SERVICE_ACCOUNT_FILE = './notiyapp-ed846-firebase-adminsdk-3p7i6-fbbc786c9a.json'
 
 credentials = service_account.Credentials.from_service_account_file(
     SERVICE_ACCOUNT_FILE,
@@ -30,7 +30,7 @@ def create_notification(request):
     # Get an access token
     access_token = get_access_token()
     # FCM url
-    url = 'https://fcm.googleapis.com/v1/projects/faceappnotify/messages:send'
+    url = 'https://fcm.googleapis.com/v1/projects/notiyapp-ed846/messages:send'
     # message data
     message = {
         'message': {
@@ -38,6 +38,9 @@ def create_notification(request):
             'notification': {
                 'title': 'Unknown Face Detected',
                 'body': 'Unknown Face Detected'
+            },
+            "android": {
+                "priority":"high"
             }
         }
     }
@@ -51,10 +54,10 @@ def create_notification(request):
 
 
 
-    # serializer = NotificationSerializer(data=request.data)
-    # if serializer.is_valid():
-    #     serializer.save()
-    #     return Response(serializer.data, status=status.HTTP_201_CREATED)
-    # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    serializer = NotificationSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-    return Response({'message': 'Data posted successfully', 'access_token': access_token,  'data': response.json()}, status=status.HTTP_200_OK)
+    # return Response({'message': 'Data posted successfully', 'access_token': access_token,  'data': response.json()}, status=status.HTTP_200_OK)

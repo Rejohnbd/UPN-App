@@ -11,22 +11,22 @@ face_recognition/__pycache__/*
 
 
 # Miscellaneous
-app/*.class
-app/*.log
-app/*.pyc
-app/*.swp
-app/.DS_Store
-app/.atom/
-app/.buildlog/
-app/.history
-app/.svn/
-app/migrate_working_dir/
+mobile_app/*.class
+mobile_app/*.log
+mobile_app/*.pyc
+mobile_app/*.swp
+mobile_app/.DS_Store
+apmobile_appp/.atom/
+mobile_app/.buildlog/
+mobile_app/.history
+mobile_app/.svn/
+mobile_app/migrate_working_dir/
 
 # IntelliJ related
-app/*.iml
-app/*.ipr
-app/*.iws
-app/.idea/
+mobile_app/*.iml
+mobile_app/*.ipr
+mobile_app/*.iws
+mobile_app/.idea/
 
 # The .vscode folder contains launch configuration and tasks you configure in
 # VS Code which you may wish to be included in version control, so this line
@@ -34,24 +34,24 @@ app/.idea/
 #.vscode/
 
 # Flutter/Dart/Pub related
-app/**/doc/api/
-app/**/ios/Flutter/.last_build_id
-app/.dart_tool/
-app/.flutter-plugins
-app/.flutter-plugins-dependencies
-app/.pub-cache/
-app/.pub/
-app/build/
+mobile_app/**/doc/api/
+mobile_app/**/ios/Flutter/.last_build_id
+mobile_app/.dart_tool/
+mobile_app/.flutter-plugins
+mobile_app/.flutter-plugins-dependencies
+mobile_app/.pub-cache/
+mobile_app/.pub/
+apmobile_appp/build/
 
 # Symbolication related
-app/app.*.symbols
+mobile_app/app.*.symbols
 
 # Obfuscation related
-app/app.*.map.json
+mobile_app/app.*.map.json
 
 # Android Studio will place build artifacts here
-app/android/app/debug
-app/android/app/profile
-app/android/app/release
+mobile_app/android/app/debug
+mobile_app/android/app/profile
+mobile_app/android/app/release
 
 
