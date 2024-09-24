@@ -5,17 +5,15 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:notify_app/notification_helper.dart';
 
 var initializationSettingsAndroid =
-const AndroidInitializationSettings('@mipmap/ic_launcher');
+    const AndroidInitializationSettings('@mipmap/ic_launcher');
 var initializationSettings =
-InitializationSettings(android: initializationSettingsAndroid);
+    InitializationSettings(android: initializationSettingsAndroid);
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-FlutterLocalNotificationsPlugin();
+    FlutterLocalNotificationsPlugin();
 
 @pragma('vm:entry-point')
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-
-}
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,8 +31,7 @@ void main() async {
   );
   await NotificationHelper.initialize(flutterLocalNotificationsPlugin);
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  await FirebaseMessaging.instance
-      .subscribeToTopic("face_detection");
+  await FirebaseMessaging.instance.subscribeToTopic("face_detection");
   flutterLocalNotificationsPlugin.initialize(initializationSettings);
   await flutterLocalNotificationsPlugin.initialize(
     initializationSettings,
@@ -72,7 +69,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _notificationCount = 3; // Example notification count
+  int _notificationCount = 5; // Example notification count
 
   @override
   Widget build(BuildContext context) {
@@ -150,6 +147,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 Navigator.pop(context); // Close the drawer
               },
             ),
+            ListTile(
+              leading: const Icon(Icons.account_balance_wallet_outlined),
+              title: const Text('Live Streaming'),
+              onTap: () {
+                Navigator.pop(context); // Close the drawer
+              },
+            ),
           ],
         ),
       ),
@@ -164,9 +168,27 @@ class _MyHomePageState extends State<MyHomePage> {
               borderRadius: BorderRadius.circular(10),
             ),
             child: ListTile(
-              leading: Icon(Icons.star, color: Colors.pinkAccent),
-              title: Text('Item ${index + 1}'),
-              subtitle: Text('Description for item ${index + 1}'),
+              leading:
+                  Icon(Icons.account_circle_outlined, color: Colors.pinkAccent),
+              title: Text(
+                'Caution Unknown Face',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold, // Bold title
+                  color: Colors.pinkAccent, // Title color as pinkAccent
+                ),
+              ),
+              subtitle: Text.rich(
+                TextSpan(
+                  text: 'Detected at ', // Normal text
+                  style: TextStyle(color: Colors.black), // Default style
+                  children: <TextSpan>[
+                    TextSpan(
+                      text: '2024-09-30 10:00AM', // Bold date & time
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
               trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey),
               onTap: () {
                 // Define your onTap action here
