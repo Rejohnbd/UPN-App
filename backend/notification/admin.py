@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Notification
+from .models import Notification, NotificationSetting
 
 # Register your models here.
 class NotificationAdmin(admin.ModelAdmin):
@@ -22,3 +22,4 @@ class NotificationAdmin(admin.ModelAdmin):
     image_preview.short_description = 'Image'
 
 admin.site.register(Notification, NotificationAdmin)
+admin.site.register(NotificationSetting)
