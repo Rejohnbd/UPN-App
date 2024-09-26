@@ -27,30 +27,30 @@ def get_access_token():
 
 @api_view(['POST'])
 def create_notification(request):
-    # Get an access token
-    access_token = get_access_token()
-    # FCM url
-    url = 'https://fcm.googleapis.com/v1/projects/notiyapp-ed846/messages:send'
-    # message data
-    message = {
-        'message': {
-            'topic': 'face_detection',
-            'notification': {
-                'title': 'Unknown Face Detected',
-                'body': 'Unknown Face Detected'
-            },
-            "android": {
-                "priority":"high"
-            }
-        }
-    }
+    # # Get an access token
+    # access_token = get_access_token()
+    # # FCM url
+    # url = 'https://fcm.googleapis.com/v1/projects/notiyapp-ed846/messages:send'
+    # # message data
+    # message = {
+    #     'message': {
+    #         'topic': 'face_detection',
+    #         'notification': {
+    #             'title': 'Caution',
+    #             'body': 'Unknown Face Detected'
+    #         },
+    #         "android": {
+    #             "priority":"high"
+    #         }
+    #     }
+    # }
 
-    headers = {
-        'Authorization': f'Bearer {access_token}',
-        'Content-Type': 'application/json'
-    }
+    # headers = {
+    #     'Authorization': f'Bearer {access_token}',
+    #     'Content-Type': 'application/json'
+    # }
 
-    response = requests.post(url,  headers=headers, data= json.dumps(message))
+    # response = requests.post(url,  headers=headers, data= json.dumps(message))
 
 
 
