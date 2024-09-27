@@ -261,6 +261,10 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _submitNotificationSettings,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.pinkAccent, // Replace with your desired color
+                foregroundColor: Colors.white
+              ),
               child: const Text('Submit'),
             ),
           ],
