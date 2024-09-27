@@ -12,6 +12,7 @@ import numpy as np
 import io
 from datetime import datetime
 import asyncio
+import pytz
 
 app = FastAPI()
 
@@ -97,15 +98,18 @@ async def post_to_external_api(image: np.ndarray):
     _, img_encoded = cv2.imencode('.jpg', image)
     image_bytes = img_encoded.tobytes()
 
+    # Define Bangladesh timezone
+    bd_timezone = pytz.timezone('Asia/Dhaka')
+
     # Prepare the data
-    date = datetime.now().strftime('%Y-%m-%d')
-    time = datetime.now().strftime('%H:%M:%S')
+    date = datetime.now(bd_timezone).strftime('%Y-%m-%d')
+    time = datetime.now(bd_timezone).strftime('%H:%M:%S')
     files = {'image': ('image.jpg', io.BytesIO(image_bytes), 'image/jpeg')}
     data = {'date': date, 'time': time}
 
     try:
         response = requests.post(EXTERNAL_API_URL, data=data, files=files)
-        if response.status_code == 200:
+        if response.status_code == 201:
             print("Data posted successfully")
         else:
             print(f"Failed to post data: {response.status_code} {response.text}")
