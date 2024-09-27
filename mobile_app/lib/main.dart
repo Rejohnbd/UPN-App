@@ -5,12 +5,12 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:notify_app/notification_helper.dart';
 
 var initializationSettingsAndroid =
-    const AndroidInitializationSettings('@mipmap/ic_launcher');
+const AndroidInitializationSettings('@mipmap/ic_launcher');
 var initializationSettings =
-    InitializationSettings(android: initializationSettingsAndroid);
+InitializationSettings(android: initializationSettingsAndroid);
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
+FlutterLocalNotificationsPlugin();
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {}
@@ -22,22 +22,20 @@ void main() async {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
   NotificationSettings settings = await messaging.requestPermission(
     alert: true,
-    announcement: false,
     badge: true,
-    carPlay: false,
-    criticalAlert: false,
-    provisional: false,
     sound: true,
   );
   await NotificationHelper.initialize(flutterLocalNotificationsPlugin);
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   await FirebaseMessaging.instance.subscribeToTopic("face_detection");
+
   flutterLocalNotificationsPlugin.initialize(initializationSettings);
   await flutterLocalNotificationsPlugin.initialize(
     initializationSettings,
     onDidReceiveNotificationResponse:
         (NotificationResponse notificationResponse) async {},
   );
+
   await NotificationHelper.initializeNotification();
   runApp(const MyApp());
 }
@@ -54,7 +52,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      home: const MyHomePage(title: 'Notify'),
+      home: const MyHomePage(title: 'Notify App'),
     );
   }
 }
@@ -69,92 +67,111 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _notificationCount = 5; // Example notification count
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.pinkAccent, // Set background color to pinkAccent
+        title: Text(
+          widget.title,
+          style: const TextStyle(color: Colors.white), // Set text color to white
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications, color: Colors.white), // Set icon color to white
+            onPressed: () {
+              // Navigate to All Notifications page
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const NotificationsPage()),
+              );
+            },
+          ),
+        ],
+      ),
+      drawer: _buildDrawer(context),
+      body: const Center(
+        child: Text(
+          'Notify App',
+          style: TextStyle(fontSize: 24),
+        ),
+      ),
+    );
+  }
+
+  Drawer _buildDrawer(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          _buildDrawerHeader(context),
+          ListTile(
+            leading: const Icon(Icons.notifications, color: Colors.pinkAccent), // Set icon color to pinkAccent
+            title: const Text('All Notifications'),
+            onTap: () {
+              Navigator.pop(context); // Close the drawer
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const NotificationsPage()),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.settings, color: Colors.pinkAccent), // Set icon color to pinkAccent
+            title: const Text('Notification Settings'),
+            onTap: () {
+              Navigator.pop(context); // Close the drawer
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const NotificationSettingsPage()),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.account_balance_wallet_outlined, color: Colors.pinkAccent), // Set icon color to pinkAccent
+            title: const Text('Live Streaming'),
+            onTap: () {
+              Navigator.pop(context); // Close the drawer
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDrawerHeader(BuildContext context) {
+    return Container(
+      height: 80,
+      decoration: const BoxDecoration(
+        color: Colors.pinkAccent, // Set the drawer header background to pinkAccent
+      ),
+      child: const Center(
+        child: Text(
+          'Menu',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 24,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class NotificationsPage extends StatelessWidget {
+  const NotificationsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-        actions: [
-          Stack(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.notifications),
-                onPressed: () {
-                  // Define what happens when notification icon is tapped
-                },
-              ),
-              if (_notificationCount > 0) // Show count if it's greater than 0
-                Positioned(
-                  right: 11,
-                  top: 11,
-                  child: Container(
-                    padding: const EdgeInsets.all(2),
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    constraints: const BoxConstraints(
-                      minWidth: 16,
-                      minHeight: 16,
-                    ),
-                    child: Text(
-                      '$_notificationCount',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ],
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            Container(
-              height: 80,
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              child: const Center(
-                child: Text(
-                  'Menu',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                  ),
-                ),
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.notifications),
-              title: const Text('All Notifications'),
-              onTap: () {
-                Navigator.pop(context); // Close the drawer
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text('Notification Settings'),
-              onTap: () {
-                Navigator.pop(context); // Close the drawer
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.account_balance_wallet_outlined),
-              title: const Text('Live Streaming'),
-              onTap: () {
-                Navigator.pop(context); // Close the drawer
-              },
-            ),
-          ],
+        backgroundColor: Colors.pinkAccent, // Set background color to pinkAccent
+        title: const Text(
+          'All Notifications',
+          style: TextStyle(color: Colors.white), // Set text color to white
         ),
       ),
       body: ListView.builder(
@@ -168,28 +185,28 @@ class _MyHomePageState extends State<MyHomePage> {
               borderRadius: BorderRadius.circular(10),
             ),
             child: ListTile(
-              leading:
-                  Icon(Icons.account_circle_outlined, color: Colors.pinkAccent),
-              title: Text(
+              leading: const Icon(Icons.account_circle_outlined,
+                  color: Colors.pinkAccent),
+              title: const Text(
                 'Caution Unknown Face',
                 style: TextStyle(
-                  fontWeight: FontWeight.bold, // Bold title
-                  color: Colors.pinkAccent, // Title color as pinkAccent
+                  fontWeight: FontWeight.bold,
+                  color: Colors.pinkAccent,
                 ),
               ),
               subtitle: Text.rich(
                 TextSpan(
-                  text: 'Detected at ', // Normal text
-                  style: TextStyle(color: Colors.black), // Default style
+                  text: 'Detected at ',
+                  style: const TextStyle(color: Colors.black),
                   children: <TextSpan>[
                     TextSpan(
-                      text: '2024-09-30 10:00AM', // Bold date & time
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      text: '2024-09-30 10:00AM',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
               ),
-              trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey),
+              trailing: const Icon(Icons.arrow_forward_ios, color: Colors.grey),
               onTap: () {
                 // Define your onTap action here
               },
@@ -198,5 +215,71 @@ class _MyHomePageState extends State<MyHomePage> {
         },
       ),
     );
+  }
+}
+
+class NotificationSettingsPage extends StatefulWidget {
+  const NotificationSettingsPage({super.key});
+
+  @override
+  State<NotificationSettingsPage> createState() =>
+      _NotificationSettingsPageState();
+}
+
+class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
+  final TextEditingController _notificationFrequencyController =
+  TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.pinkAccent, // Set background color to pinkAccent
+        title: const Text(
+          'Notification Settings',
+          style: TextStyle(color: Colors.white), // Set text color to white
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Set Notification Interval',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: _notificationFrequencyController,
+              decoration: const InputDecoration(
+                labelText: 'Notification Interval (in minutes)',
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.number,
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _submitNotificationSettings,
+              child: const Text('Submit'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _submitNotificationSettings() {
+    String frequency = _notificationFrequencyController.text;
+    // Handle the logic for updating notification frequency
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Frequency set to $frequency minutes')),
+    );
+  }
+
+  @override
+  void dispose() {
+    _notificationFrequencyController.dispose();
+    super.dispose();
   }
 }
